@@ -1,0 +1,3 @@
+host/*.cmd
+host/*.json
+host/__pycache__/
