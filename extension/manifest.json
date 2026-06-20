@@ -3,6 +3,12 @@
   "name": "Voided Video Downloader",
   "version": "0.3.0",
   "description": "Adds a download control to the YouTube player and sends downloads to a local yt-dlp backend.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiuHKHjNvuq79qSFffV8l27wqQgQxsiBp7JFamjYoSe9UtGziyeppoT59oWbhgYrR5YLvPh88JKGJ5l6OaWKMLieaMAIQwTD7Uqs2s/vMJpDDomz+ONpRXbFGWpX7xKtA2FdFeiGGCl7tje14fSdxk3Em5z6Sw4ZW4um9Gp2Ic6dFuN8cU7b9MT07K2iLbMEjf8AFwIbLCMtlNSbK9deSRi199IZLBg4TZ+fFhbdWtADsgApr5bhUhc0JoPq5gZPFXR+bzW+nyktihn6NAg01UTwuxmQJe59Z4MkxyAd2C79RprC/4/4GkfM7eqVL0RV2OqpFDVeasuI4tNF9J27iZQIDAQAB",
   "permissions": [
     "cookies",
