@@ -9,7 +9,7 @@ $hostCmd = Join-Path $hostDir "ytp_downloader_host.cmd"
 $hostManifest = Join-Path $hostDir "$hostName.json"
 $registryPath = "HKCU:\Software\Google\Chrome\NativeMessagingHosts\$hostName"
 
-function Get-ChromeExtensionIdFromKey {
+function Get-ExtensionId {
   param([Parameter(Mandatory = $true)][string]$Key)
 
   $bytes = [Convert]::FromBase64String($Key)
@@ -41,7 +41,34 @@ function Update-SessionPathFromRegistry {
   }
 }
 
-function Install-FfmpegIfNeeded {
+function Install-YtDlp {
+  if (Test-CommandOnPath -Name "yt-dlp") {
+    Write-Host "yt-dlp found on PATH."
+    return
+  }
+
+  Write-Host "yt-dlp was not found on PATH. Installing it with winget..."
+
+  $winget = Get-Command winget -ErrorAction SilentlyContinue
+  if (-not $winget) {
+    throw "yt-dlp is required, but winget is unavailable. Install yt-dlp manually and run this installer again: https://github.com/yt-dlp/yt-dlp#installation"
+  }
+
+  & $winget.Source install --id yt-dlp.yt-dlp -e --source winget --accept-package-agreements --accept-source-agreements
+  if ($LASTEXITCODE -ne 0) {
+    throw "winget could not install yt-dlp. Install it manually and run this installer again: https://github.com/yt-dlp/yt-dlp#installation"
+  }
+
+  Update-SessionPathFromRegistry
+
+  if (Test-CommandOnPath -Name "yt-dlp") {
+    Write-Host "yt-dlp installed successfully."
+  } else {
+    Write-Host "yt-dlp installation finished. Restart PowerShell and Chrome before downloading."
+  }
+}
+
+function Install-Ffmpeg {
   $missing = @()
 
   if (-not (Test-CommandOnPath -Name "ffmpeg")) {
@@ -87,8 +114,10 @@ function Install-FfmpegIfNeeded {
   }
 }
 
+Install-YtDlp
+
 $manifest = Get-Content $extensionManifest -Raw | ConvertFrom-Json
-$extensionId = Get-ChromeExtensionIdFromKey -Key $manifest.key
+$extensionId = Get-ExtensionId -Key $manifest.key
 $python = (Get-Command python -ErrorAction Stop).Source
 
 @"
@@ -111,13 +140,11 @@ $nativeManifest |
 New-Item -Path $registryPath -Force | Out-Null
 Set-Item -Path $registryPath -Value $hostManifest
 
-Install-FfmpegIfNeeded
+Install-Ffmpeg
 
 Write-Host "Installed native messaging host: $hostName"
 Write-Host "Extension ID: $extensionId"
 Write-Host "Extension directory: $extensionDir"
 Write-Host "Downloads will ask where to save by default."
-Write-Host "If 'Ask every time' is off and no default folder is set, downloads will use: $([IO.Path]::Combine($env:USERPROFILE, 'Downloads', 'yt-dlp'))"
-Write-Host "MP3 conversion requires ffmpeg and ffprobe on PATH. Restart Chrome after installing FFmpeg."
 Write-Host ""
 Write-Host "Next step: open chrome://extensions, enable Developer mode, and Load unpacked using the extension directory above."

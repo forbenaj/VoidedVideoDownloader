@@ -19,7 +19,7 @@ From PowerShell, in the main repo folder, execute:
 .\install.ps1
 ```
 
-The installer checks for `ffmpeg` and `ffprobe`. If either is missing and `winget` is available, it can install FFmpeg for MP3 conversion.
+The installer checks for `yt-dlp` and installs it with `winget` when it is missing. It also checks for `ffmpeg` and `ffprobe`; if either is missing and `winget` is available, it can install FFmpeg for MP3 conversion.
 
 Then open `chrome://extensions`, enable `Developer mode`, choose `Load unpacked`, and select the repository's `extension` folder. The installer prints its full path for convenience.
 
@@ -44,7 +44,7 @@ If `Ask every time` is off, downloads save directly to the default folder. If yo
 
 ## Notes
 
-- `yt-dlp` must be available on `PATH`.
+- The installer installs `yt-dlp` through `winget` when it is not already available on `PATH`.
 - `ffmpeg` and `ffprobe` must be available on `PATH` for `MP3 audio` conversion. The installer can install FFmpeg through `winget` when available.
 - YouTube downloads pass relevant Chrome cookies through the extension API into a temporary `cookies.txt` file for `yt-dlp`. This avoids locked Chrome cookie database errors from `--cookies-from-browser chrome`.
 - This uses Chrome native messaging because content scripts cannot run local executables directly.
